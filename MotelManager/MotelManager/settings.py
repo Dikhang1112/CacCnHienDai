@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Motel.apps.MotelConfig'
+    'Motel.apps.MotelConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
