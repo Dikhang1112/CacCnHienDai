@@ -1,54 +1,81 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import Tenant, Post_Tenant, UserAccount, AdminManagement, Post_Landlord, Followings, User
+from django.contrib.auth.admin import UserAdmin  # Thêm dòng này
+from .models import (
+    Tenant, Post_Tenant, UserAccount, AdminManagement, Post_Landlord,
+    Followings, User, Comment, Notification, ImageMotel
+)
+
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    # Các trường hiển thị trong form sửa và thêm
     fieldsets = UserAdmin.fieldsets + (
         ('Thông tin bổ sung', {
             'fields': ('user_type', 'avatar', 'phone'),
         }),
     )
 
-    # Các trường khi tạo mới người dùng
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Thông tin bổ sung', {
             'fields': ('user_type', 'avatar', 'phone'),
         }),
     )
 
-    # Các trường hiển thị trong danh sách admin
     list_display = ('username', 'email', 'user_type', 'is_staff', 'is_active')
     search_fields = ('username', 'email', 'user_type')
 
 
+@admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'created_at')
-    search_fields = ('name', 'location')
+    list_display = ('user', 'location', 'created_at', 'updated_at', 'active')
+    search_fields = ('user__username', 'location')
 
 
+@admin.register(Post_Tenant)
 class PostTenantAdmin(admin.ModelAdmin):
-    list_display = ('title', 'tenant', 'created_at')
-    search_fields = ('title',)
+    list_display = ('title', 'tenant', 'created_at', 'updated_at', 'active')
+    search_fields = ('title', 'tenant__username')
 
 
+@admin.register(UserAccount)
 class UserAccountAdmin(admin.ModelAdmin):
-    list_display = ('user', 'account_type', 'created_at')  # Hiển thị các trường cần thiết
-    search_fields = ('user__username', 'account_type')  # Cho phép tìm kiếm
-    list_filter = ('account_type',)  # Thêm bộ lọc
+    list_display = ('user', 'type', 'created_at', 'updated_at', 'active')
+    search_fields = ('user__username', 'type')
+    list_filter = ('type',)
 
 
+@admin.register(AdminManagement)
 class AdminManagementAdmin(admin.ModelAdmin):
-    list_display = ('admin_user', 'role', 'created_at')  # Hiển thị thông tin cơ bản
-    search_fields = ('admin_user__username', 'role')  # Tìm kiếm theo admin và vai trò
-    list_filter = ('role',)  # Bộ lọc theo vai trò
+    list_display = ('userAccount', 'amount_landlord', 'amount_tenant', 'admin_id', 'post_id')
+    search_fields = ('userAccount__user__username', 'admin_id', 'post_id')
 
 
-# Register your models here.
-admin.site.register(Tenant)
-admin.site.register(Post_Tenant)
-admin.site.register(UserAccount)
-admin.site.register(AdminManagement)
-admin.site.register(Post_Landlord)
-admin.site.register(Followings)
+@admin.register(Post_Landlord)
+class PostLandlordAdmin(admin.ModelAdmin):
+    list_display = ('title', 'user', 'price', 'capacity', 'status', 'location', 'created_at', 'updated_at', 'active')
+    search_fields = ('title', 'user__username', 'location')
+    list_filter = ('status',)
+
+
+@admin.register(Followings)
+class FollowingsAdmin(admin.ModelAdmin):
+    list_display = ('user_following', 'user_follower', 'date', 'active')
+    search_fields = ('user_following__username', 'user_follower__username')
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('content', 'user', 'post', 'created_at', 'updated_at', 'active')
+    search_fields = ('content', 'user__username', 'post__title')
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'receiver', 'sender', 'post', 'is_read', 'created_at', 'updated_at', 'active')
+    search_fields = ('title', 'receiver__username', 'sender__username', 'post__title')
+    list_filter = ('is_read',)
+
+
+@admin.register(ImageMotel)
+class ImageMotelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'landlord_id', 'url')
+    search_fields = ('landlord_id', 'url')
