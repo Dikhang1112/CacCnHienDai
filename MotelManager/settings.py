@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'Motel.apps.MotelConfig',
     'rest_framework',
     'oauth2_provider',
-    'drf_yasg'
+    'drf_yasg',
+    'cloudinary'
 
 ]
 
@@ -53,6 +54,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'MotelManager.urls'
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name="danworhyp",
+    api_key="537776351198833",
+    api_secret="ocazcjJcogxKDSL2d-TWf28mda8",  # Click 'View API Keys' above to copy your API secret
+)
 
 TEMPLATES = [
     {
@@ -88,7 +97,7 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
+        'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': '2',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',

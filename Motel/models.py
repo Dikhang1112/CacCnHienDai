@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 
 class BaseModel(models.Model):
@@ -12,6 +13,7 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser):
+    avatar = CloudinaryField('avatar');
     TENANT = 'tenant'
     LANDLORD = 'landlord'
     USERTYPE_CHOICES = [
@@ -19,7 +21,6 @@ class User(AbstractUser):
         (LANDLORD, 'Landlord'),
     ]
     user_type = models.CharField(max_length=10, choices=USERTYPE_CHOICES, default=TENANT)
-    avatar = models.ImageField(upload_to='uploads/%Y/%m')
     phone = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,11 +1,13 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField, IntegerField
-from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, Notification, ImageMotel
+from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
+    Notification, ImageMotel
 
 
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'user_type', 'avatar', 'phone', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user_type', 'phone', 'created_at', 'updated_at', 'active', 'avatar', 'first_name',
+                  'last_name', 'email', 'username', 'password']
 
 
 class TenantSerializer(ModelSerializer):
@@ -39,7 +41,8 @@ class PostLandlordSerializer(ModelSerializer):
 
     class Meta:
         model = Post_Landlord
-        fields = ['id', 'user', 'title', 'address', 'description', 'price', 'capacity', 'status', 'location', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user', 'title', 'address', 'description', 'price', 'capacity', 'status', 'location',
+                  'created_at', 'updated_at', 'active']
 
 
 class FollowingsSerializer(ModelSerializer):
@@ -64,7 +67,8 @@ class AdminManagementSerializer(ModelSerializer):
 
     class Meta:
         model = AdminManagement
-        fields = ['id', 'userAccount', 'amount_landlord', 'amount_tenant', 'admin_id', 'post_id', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'userAccount', 'amount_landlord', 'amount_tenant', 'admin_id', 'post_id', 'created_at',
+                  'updated_at', 'active']
 
 
 class NotificationSerializer(ModelSerializer):
@@ -74,7 +78,8 @@ class NotificationSerializer(ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ['id', 'title', 'content', 'receiver', 'sender', 'post', 'is_read', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'title', 'content', 'receiver', 'sender', 'post', 'is_read', 'created_at', 'updated_at',
+                  'active']
 
 
 class ImageMotelSerializer(ModelSerializer):

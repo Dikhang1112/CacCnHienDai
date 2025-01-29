@@ -1,14 +1,20 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework import viewsets, permissions
-from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, Notification, ImageMotel
-from .serializers import UserSerializer, TenantSerializer, PostTenantSerializer, CommentSerializer, PostLandlordSerializer, FollowingsSerializer, UserAccountSerializer, AdminManagementSerializer, NotificationSerializer, ImageMotelSerializer
+from rest_framework import viewsets, permissions, parsers, generics
+from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
+    Notification, ImageMotel
+from .serializers import UserSerializer, TenantSerializer, PostTenantSerializer, CommentSerializer, \
+    PostLandlordSerializer, FollowingsSerializer, UserAccountSerializer, AdminManagementSerializer, \
+    NotificationSerializer, ImageMotelSerializer
+from rest_framework.parsers import MultiPartParser
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(active=True)
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView,generics.RetrieveAPIView, generics.ListAPIView):
+    queryset = User.objects.filter(is_active=True).all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, ]
+    # parser_classes = [parsers.MultiPartParser]
 
 
 class TenantViewSet(viewsets.ModelViewSet):
