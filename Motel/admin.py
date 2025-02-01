@@ -77,5 +77,5 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(ImageMotel)
 class ImageMotelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'landlord_id', 'url')
-    search_fields = ('landlord_id', 'url')
+    list_display = ('id', 'landlord_id', 'image')
+    search_fields = ('landlord_id',)

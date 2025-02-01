@@ -9,7 +9,7 @@ class BaseModel(models.Model):
     active = models.BooleanField(default=True)
 
     class Meta:
-        abstract = True   # Lớp trừu tượng
+        abstract = True  # lop truu tuong
 
 
 class User(AbstractUser):
@@ -50,9 +50,24 @@ class Tenant(BaseModel):
 
 class Post_Tenant(BaseModel):
     tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)  # lien ket voi user
-    comment = models.ForeignKey('Comment', related_name='post_tenant', on_delete=models.SET_NULL, null=True, blank=True)  # lk voi comment
+    comment = models.ForeignKey('Comment', related_name='post_tenant', on_delete=models.SET_NULL, null=True,
+                                blank=True)  # lk voi comment
     title = models.CharField(max_length=255)
     content = models.TextField()
+    price = models.FloatField(default=0.0)
+    LIKE = 'like'
+    # DISLIKE = 'dislike'
+    # REPORT = 'report'
+    VIEW = 'view'
+
+    INTERACTION_CHOICES = [
+        (LIKE, 'Like'),
+        # (DISLIKE, 'Dislike'),
+        # (REPORT, 'Report'),
+        (VIEW, 'View'),
+    ]
+
+    interaction_type = models.CharField(max_length=10, choices=INTERACTION_CHOICES, default=VIEW)
 
     class Meta:
         db_table = 'Post_Tenant'
@@ -64,7 +79,8 @@ class Post_Tenant(BaseModel):
 class Comment(BaseModel):
     content = models.TextField()  # noi dung cua comment
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)  # user binh luan
-    post = models.ForeignKey('Post_Tenant', related_name='comments', on_delete=models.CASCADE)  # bai viet nguoi dung binh luan
+    post = models.ForeignKey('Post_Tenant', related_name='comments',
+                             on_delete=models.CASCADE)  # bai viet nguoi dung binh luan
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.post.title}"
@@ -100,7 +116,8 @@ class Notification(BaseModel):
     content = models.TextField(null=False)
     receiver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_notifications')
     sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received_notifications')
-    post = models.ForeignKey('Post_Tenant', on_delete=models.CASCADE, related_name='notifications', related_query_name='notification')
+    post = models.ForeignKey('Post_Tenant', on_delete=models.CASCADE, related_name='notifications',
+                             related_query_name='notification')
     is_read = models.BooleanField(default=False, null=False)
 
     def __str__(self):
@@ -113,7 +130,7 @@ class Notification(BaseModel):
 class ImageMotel(models.Model):
     id = models.AutoField(primary_key=True)
     landlord_id = models.IntegerField()
-    url = models.URLField(max_length=500)
+    image = CloudinaryField('image', default="https://res.cloudinary.com/demo/image/upload/sample.jpg")
 
     def to_string_representation(self):
         return f"Image {self.id} - Landlord {self.landlord_id}"
@@ -128,6 +145,14 @@ class Post_Landlord(BaseModel):
     capacity = models.IntegerField()
     status = models.BooleanField(default=True)  # trang thai xem bai dang con hieu luc k?
     location = models.CharField(max_length=255, null=True, blank=True)
+    INTERACTION_CHOICES = [
+        ('like', 'Like'),
+        # ('dislike', 'Dislike'),
+        # ('report', 'Report'),
+        ('view', 'View'),
+    ]
+
+    interaction_type = models.CharField(max_length=10, choices=INTERACTION_CHOICES, default='view')
 
     class Meta:
         db_table = 'Post_Landlord'

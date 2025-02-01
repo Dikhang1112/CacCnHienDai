@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField, IntegerField
+from rest_framework.serializers import ModelSerializer, StringRelatedField
+from cloudinary.models import CloudinaryField
 from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
     Notification, ImageMotel
 
@@ -11,7 +12,7 @@ class UserSerializer(ModelSerializer):
 
 
 class TenantSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị chi tiết thông tin User thay vì ID
+    user = StringRelatedField()
 
     class Meta:
         model = Tenant
@@ -19,17 +20,18 @@ class TenantSerializer(ModelSerializer):
 
 
 class PostTenantSerializer(ModelSerializer):
-    tenant = StringRelatedField()  # Hiển thị chi tiết thông tin Tenant thay vì ID
-    comment = StringRelatedField()  # Hiển thị chi tiết thông tin Comment thay vì ID
+    tenant = StringRelatedField()  # Hiển thị tên Tenant thay vì ID
+    comment = StringRelatedField()  # Hiển thị nội dung Comment thay vì ID
 
     class Meta:
         model = Post_Tenant
-        fields = ['id', 'tenant', 'comment', 'title', 'content', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'tenant', 'comment', 'title', 'content', 'price', 'interaction_type',  # Thêm các trường mới
+                  'created_at', 'updated_at', 'active']
 
 
 class CommentSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị chi tiết thông tin User thay vì ID
-    post = StringRelatedField()  # Hiển thị chi tiết thông tin PostTenant thay vì ID
+    user = StringRelatedField()  # Hiển thị chi tiết User thay vì ID
+    post = StringRelatedField()  # Hiển thị chi tiết PostTenant thay vì ID
 
     class Meta:
         model = Comment
@@ -37,17 +39,18 @@ class CommentSerializer(ModelSerializer):
 
 
 class PostLandlordSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị chi tiết thông tin User thay vì ID
+    user = StringRelatedField()  # Hiển thị tên User thay vì ID
 
     class Meta:
         model = Post_Landlord
         fields = ['id', 'user', 'title', 'address', 'description', 'price', 'capacity', 'status', 'location',
+                  'interaction_type',  # Thêm interaction_type vào đây
                   'created_at', 'updated_at', 'active']
 
 
 class FollowingsSerializer(ModelSerializer):
-    user_following = StringRelatedField()  # Hiển thị chi tiết thông tin User (người theo dõi)
-    user_follower = StringRelatedField()  # Hiển thị chi tiết thông tin User (người bị theo dõi)
+    user_following = StringRelatedField()  # Hiển thị tên User (người theo dõi)
+    user_follower = StringRelatedField()  # Hiển thị tên User (người bị theo dõi)
 
     class Meta:
         model = Followings
@@ -55,7 +58,7 @@ class FollowingsSerializer(ModelSerializer):
 
 
 class UserAccountSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị chi tiết thông tin User thay vì ID
+    user = StringRelatedField()  # Hiển thị tên User thay vì ID
 
     class Meta:
         model = UserAccount
@@ -63,7 +66,7 @@ class UserAccountSerializer(ModelSerializer):
 
 
 class AdminManagementSerializer(ModelSerializer):
-    userAccount = StringRelatedField()  # Hiển thị chi tiết thông tin UserAccount thay vì ID
+    userAccount = StringRelatedField()  # Hiển thị tên UserAccount thay vì ID
 
     class Meta:
         model = AdminManagement
@@ -72,9 +75,9 @@ class AdminManagementSerializer(ModelSerializer):
 
 
 class NotificationSerializer(ModelSerializer):
-    receiver = StringRelatedField()  # Hiển thị chi tiết thông tin User (người nhận thông báo)
-    sender = StringRelatedField()  # Hiển thị chi tiết thông tin User (người gửi thông báo)
-    post = StringRelatedField()  # Hiển thị chi tiết thông tin Post_Tenant thay vì ID
+    receiver = StringRelatedField()  # Hiển thị tên User (người nhận thông báo)
+    sender = StringRelatedField()  # Hiển thị tên User (người gửi thông báo)
+    post = StringRelatedField()  # Hiển thị tên Post_Tenant thay vì ID
 
     class Meta:
         model = Notification
@@ -83,6 +86,8 @@ class NotificationSerializer(ModelSerializer):
 
 
 class ImageMotelSerializer(ModelSerializer):
+    image = CloudinaryField()
+
     class Meta:
         model = ImageMotel
         fields = ['id', 'landlord_id', 'url', 'created_at', 'updated_at', 'active']

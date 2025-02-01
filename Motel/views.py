@@ -9,10 +9,10 @@ from .serializers import UserSerializer, TenantSerializer, PostTenantSerializer,
 from rest_framework.parsers import MultiPartParser
 
 
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView,generics.RetrieveAPIView, generics.ListAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView):
     queryset = User.objects.filter(is_active=True).all()
     serializer_class = UserSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, ]
     # parser_classes = [parsers.MultiPartParser]
 
@@ -26,6 +26,12 @@ class PostTenantViewSet(viewsets.ModelViewSet):
     queryset = Post_Tenant.objects.filter(active=True)
     serializer_class = PostTenantSerializer
 
+    def get_queryset(self):
+        return Post_Tenant.objects.filter(active=True).select_related('tenant').prefetch_related('interactions')
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.filter(active=True)
@@ -35,6 +41,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 class PostLandlordViewSet(viewsets.ModelViewSet):
     queryset = Post_Landlord.objects.filter(active=True)
     serializer_class = PostLandlordSerializer
+
+    def get_queryset(self):
+        return Post_Landlord.objects.filter(active=True).select_related('user').prefetch_related('interactions')
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class FollowingsViewSet(viewsets.ModelViewSet):
@@ -58,8 +70,9 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 
 class ImageMotelViewSet(viewsets.ModelViewSet):
-    queryset = ImageMotel.objects.filter(id=True)
+    queryset = ImageMotel.objects.all()
     serializer_class = ImageMotelSerializer
+    parser_classes = [MultiPartParser, ]
 
 
 def index(request):
