@@ -50,7 +50,7 @@ class PostLandlordViewSet(viewsets.ModelViewSet):
     queryset = Post_Landlord.objects.filter(active=True)
     serializer_class = PostLandlordSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Post_Landlord.objects.filter(active=True).select_related('user').prefetch_related('interactions')
