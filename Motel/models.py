@@ -70,22 +70,8 @@ class Post_Tenant(BaseModel):
         return self.title
 
 
-class UserAccount(BaseModel):  # Thừa kế BaseModel
-    """Thông tin chi tiết UserAccount """
-    TYPE_CHOICES = [
-        ('tenant', 'Tenant'),
-        ('landlord', 'Landlord'),
-    ]
-    user = models.OneToOneField('User', on_delete=models.CASCADE, related_name='account')  # 1-to-1 voi user
-    type = models.CharField(max_length=50, choices=TYPE_CHOICES)  # Enum
-
-    def __str__(self):
-        return f"{self.user.username} - {self.type}"
-
-
-class AdminManagement(models.Model):
+class AdminManagement(BaseModel):
     id = models.AutoField(primary_key=True)
-    userAccount = models.ForeignKey('UserAccount', on_delete=models.CASCADE)
     amount_landlord = models.IntegerField()
     amount_tenant = models.IntegerField()
     admin_id = models.IntegerField()

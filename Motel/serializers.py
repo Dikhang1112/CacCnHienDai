@@ -1,8 +1,10 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, StringRelatedField, SerializerMethodField, \
+    PrimaryKeyRelatedField
 from cloudinary.models import CloudinaryField
-from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
+from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, AdminManagement, \
     Notification, ImageMotel
-
+from rest_framework.fields import CharField, IntegerField
+from rest_framework import serializers
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -17,7 +19,7 @@ class PostTenantSerializer(ModelSerializer):
 
     class Meta:
         model = Post_Tenant
-        fields = ['id', 'tenant', 'comment', 'title', 'content', 'price', 'interaction_type',  # Thêm các trường mới
+        fields = ['id', 'tenant', 'comment', 'title', 'content', 'price', 'interaction_type',
                   'created_at', 'updated_at', 'active']
 
 
@@ -41,20 +43,12 @@ class PostLandlordSerializer(ModelSerializer):
 
 
 class FollowingsSerializer(ModelSerializer):
-    user_following = StringRelatedField()  # Hiển thị tên User (người theo dõi)
-    user_follower = StringRelatedField()  # Hiển thị tên User (người bị theo dõi)
+    user_following = PrimaryKeyRelatedField(queryset=User.objects.all())  # truyen id của following
+    user_follower = PrimaryKeyRelatedField(queryset=User.objects.all())  # truyen id cua follower
 
     class Meta:
         model = Followings
         fields = ['id', 'user_following', 'user_follower', 'date', 'created_at', 'updated_at', 'active']
-
-
-class UserAccountSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị tên User thay vì ID
-
-    class Meta:
-        model = UserAccount
-        fields = ['id', 'user', 'type', 'created_at', 'updated_at', 'active']
 
 
 class AdminManagementSerializer(ModelSerializer):
@@ -67,9 +61,9 @@ class AdminManagementSerializer(ModelSerializer):
 
 
 class NotificationSerializer(ModelSerializer):
-    receiver = StringRelatedField()  # Hiển thị tên User (người nhận thông báo)
-    sender = StringRelatedField()  # Hiển thị tên User (người gửi thông báo)
-    post = StringRelatedField()  # Hiển thị tên Post_Tenant thay vì ID
+    receiver = PrimaryKeyRelatedField(queryset=User.objects.all())  # truyen id user
+    sender = PrimaryKeyRelatedField(queryset=User.objects.all())
+    post = PrimaryKeyRelatedField(queryset=Post_Tenant.objects.all())  # truyen id post_tenant
 
     class Meta:
         model = Notification
@@ -88,3 +82,9 @@ class ImageMotelSerializer(ModelSerializer):
         if obj.image:
             return obj.image.url  # Lấy URL của ảnh từ Cloudinary
         return None
+
+
+class UserStatsSerializer(serializers.Serializer):
+    user_type = CharField()  # nguoi thue tro hoac chu tro
+    month = IntegerField()
+    count = IntegerField()
