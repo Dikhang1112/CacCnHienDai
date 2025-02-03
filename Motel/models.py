@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from cloudinary.models import CloudinaryField
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 
 class BaseModel(models.Model):
@@ -40,19 +41,12 @@ class User(AbstractUser):
             return f"{self.username} - Unknown"
 
 
-class Tenant(BaseModel):
-    user = models.OneToOneField(User, related_name='tenant_account', on_delete=models.CASCADE)
-    location = models.TextField(blank=True, null=True)  # Dia chi tenant
-
-    def __str__(self):
-        return f"{self.user.username} - {self.location}"
-
-
 class Post_Tenant(BaseModel):
     tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)  # lien ket voi user
     title = models.CharField(max_length=255)
     content = models.TextField()
     price = models.FloatField(default=0.0)
+    location = models.TextField(blank=True, null=True)
     LIKE = 'like'
     # DISLIKE = 'dislike'
     # REPORT = 'report'
@@ -72,16 +66,6 @@ class Post_Tenant(BaseModel):
 
     def __str__(self):
         return self.title
-
-
-class Comment(BaseModel):
-    content = models.TextField()  # noi dung cua comment
-    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)  # user binh luan
-    post = models.ForeignKey('Post_Tenant', related_name='comments',
-                             on_delete=models.CASCADE)  # bai viet nguoi dung binh luan
-
-    def __str__(self):
-        return f"Comment by {self.user.username} on {self.post.title}"
 
 
 class UserAccount(BaseModel):  # Thừa kế BaseModel
@@ -180,3 +164,19 @@ class Followings(BaseModel):
     class Meta:
         db_table = 'Followings'
         unique_together = ('user_following', 'user_follower')
+
+
+class Comment(BaseModel):
+    content = models.TextField()
+    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    post_tenant = models.ForeignKey(Post_Tenant, related_name='comments', on_delete=models.CASCADE, null=True,
+                                    blank=True)
+    post_landlord = models.ForeignKey(Post_Landlord, related_name='comments', on_delete=models.CASCADE, null=True,
+                                      blank=True)
+
+    def __str__(self):
+        if self.post_tenant:
+            return f"Comment by {self.user.username} on {self.post_tenant.title}"
+        elif self.post_landlord:
+            return f"Comment by {self.user.username} on {self.post_landlord.title}"
+        return f"Comment by {self.user.username}"

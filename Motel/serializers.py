@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField
 from cloudinary.models import CloudinaryField
-from .models import User, Tenant, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
+from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
     Notification, ImageMotel
 
 
@@ -9,14 +9,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'user_type', 'phone', 'created_at', 'updated_at', 'active', 'avatar', 'first_name',
                   'last_name', 'email', 'username', 'password']
-
-
-class TenantSerializer(ModelSerializer):
-    user = StringRelatedField()
-
-    class Meta:
-        model = Tenant
-        fields = ['id', 'user', 'location', 'created_at', 'updated_at', 'active']
 
 
 class PostTenantSerializer(ModelSerializer):

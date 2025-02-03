@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin  # Thêm dòng này
 from .models import (
-    Tenant, Post_Tenant, UserAccount, AdminManagement, Post_Landlord,
+    Post_Tenant, UserAccount, AdminManagement, Post_Landlord,
     Followings, User, Comment, Notification, ImageMotel
 )
 
@@ -23,11 +23,6 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'user_type', 'is_staff', 'is_active')
     search_fields = ('username', 'email', 'user_type')
 
-
-@admin.register(Tenant)
-class TenantAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location', 'created_at', 'updated_at', 'active')
-    search_fields = ('user__username', 'location')
 
 
 @admin.register(Post_Tenant)
@@ -64,8 +59,18 @@ class FollowingsAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('content', 'user', 'post', 'created_at', 'updated_at', 'active')
-    search_fields = ('content', 'user__username', 'post__title')
+    list_display = ('content', 'user', 'get_post_tenant_title', 'get_post_landlord_title')
+
+    def get_post_tenant_title(self, obj):
+        return obj.post_tenant.title if obj.post_tenant else None  # Trả về tiêu đề của post_tenant nếu có
+    get_post_tenant_title.admin_order_field = 'post_tenant__title'  # Cho phép sắp xếp theo title của post_tenant
+    get_post_tenant_title.short_description = 'Post Tenant Title'  # Tên cột trong trang admin
+
+    def get_post_landlord_title(self, obj):
+        return obj.post_landlord.title if obj.post_landlord else None  # Trả về tiêu đề của post_landlord nếu có
+    get_post_landlord_title.admin_order_field = 'post_landlord__title'  # Cho phép sắp xếp theo title của post_landlord
+    get_post_landlord_title.short_description = 'Post Landlord Title'  # Tên cột trong trang admin
+
 
 
 @admin.register(Notification)
@@ -78,4 +83,4 @@ class NotificationAdmin(admin.ModelAdmin):
 @admin.register(ImageMotel)
 class ImageMotelAdmin(admin.ModelAdmin):
     list_display = ('id', 'post_landlord', 'image')
-    search_fields = ('landlord_id',)
+    search_fields = ('post_landlord__title',)

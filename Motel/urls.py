@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
-router.register(r'tenants', views.TenantViewSet)
 router.register(r'post-tenants', views.PostTenantViewSet)
 router.register(r'comments', views.CommentViewSet)
 router.register(r'post-landlords', views.PostLandlordViewSet)
