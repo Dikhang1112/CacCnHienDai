@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField
+from rest_framework.serializers import ModelSerializer, StringRelatedField, SerializerMethodField
 from cloudinary.models import CloudinaryField
 from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, UserAccount, AdminManagement, \
     Notification, ImageMotel
@@ -78,8 +78,13 @@ class NotificationSerializer(ModelSerializer):
 
 
 class ImageMotelSerializer(ModelSerializer):
-    image = CloudinaryField()
+    image_url = SerializerMethodField()
 
     class Meta:
         model = ImageMotel
-        fields = ['id', 'post_landlord', 'url', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'post_landlord', 'image_url', 'created_at', 'updated_at']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url  # Lấy URL của ảnh từ Cloudinary
+        return None

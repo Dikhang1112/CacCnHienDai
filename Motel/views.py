@@ -6,7 +6,7 @@ from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, UserA
 from .serializers import UserSerializer, PostTenantSerializer, CommentSerializer, \
     PostLandlordSerializer, FollowingsSerializer, UserAccountSerializer, AdminManagementSerializer, \
     NotificationSerializer, ImageMotelSerializer
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView):
@@ -74,7 +74,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class ImageMotelViewSet(viewsets.ModelViewSet):
     queryset = ImageMotel.objects.all()
     serializer_class = ImageMotelSerializer
-    parser_classes = [MultiPartParser, ]
+    parser_classes = [MultiPartParser, FormParser]  # Hỗ trợ upload file
 
 
 def index(request):
