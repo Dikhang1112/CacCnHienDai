@@ -20,8 +20,8 @@ class TenantSerializer(ModelSerializer):
 
 
 class PostTenantSerializer(ModelSerializer):
-    tenant = StringRelatedField()  # Hiển thị tên Tenant thay vì ID
-    comment = StringRelatedField()  # Hiển thị nội dung Comment thay vì ID
+    tenant = StringRelatedField()
+    comment = StringRelatedField()
 
     class Meta:
         model = Post_Tenant
@@ -30,8 +30,8 @@ class PostTenantSerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị chi tiết User thay vì ID
-    post = StringRelatedField()  # Hiển thị chi tiết PostTenant thay vì ID
+    user = StringRelatedField()
+    post = StringRelatedField()
 
     class Meta:
         model = Comment

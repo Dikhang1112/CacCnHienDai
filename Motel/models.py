@@ -13,7 +13,7 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser):
-    avatar = CloudinaryField('avatar');
+    avatar = CloudinaryField('avatar')
     TENANT = 'tenant'
     LANDLORD = 'landlord'
     USERTYPE_CHOICES = [
@@ -50,8 +50,6 @@ class Tenant(BaseModel):
 
 class Post_Tenant(BaseModel):
     tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)  # lien ket voi user
-    comment = models.ForeignKey('Comment', related_name='post_tenant', on_delete=models.SET_NULL, null=True,
-                                blank=True)  # lk voi comment
     title = models.CharField(max_length=255)
     content = models.TextField()
     price = models.FloatField(default=0.0)
@@ -114,8 +112,8 @@ class AdminManagement(models.Model):
 class Notification(BaseModel):
     title = models.TextField(null=False)
     content = models.TextField(null=False)
-    receiver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_notifications')
-    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received_notifications')
+    receiver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received_notifications')
+    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_notifications')
     post = models.ForeignKey('Post_Tenant', on_delete=models.CASCADE, related_name='notifications',
                              related_query_name='notification')
     is_read = models.BooleanField(default=False, null=False)
@@ -129,11 +127,17 @@ class Notification(BaseModel):
 
 class ImageMotel(models.Model):
     id = models.AutoField(primary_key=True)
-    landlord_id = models.IntegerField()
+    post_landlord = models.ForeignKey(
+        'Post_Landlord',
+        on_delete=models.CASCADE,
+        related_name='images',
+        null=True,
+        blank=True
+    )
     image = CloudinaryField('image', default="https://res.cloudinary.com/demo/image/upload/sample.jpg")
 
-    def to_string_representation(self):
-        return f"Image {self.id} - Landlord {self.landlord_id}"
+    def __str__(self):
+        return f"Image {self.id} - Post {self.post_landlord.title}"
 
 
 class Post_Landlord(BaseModel):

@@ -27,7 +27,7 @@ class PostTenantViewSet(viewsets.ModelViewSet):
     serializer_class = PostTenantSerializer
 
     def get_queryset(self):
-        return Post_Tenant.objects.filter(active=True).select_related('tenant').prefetch_related('interactions')
+        return Post_Tenant.objects.filter(active=True).select_related('tenant')
 
     def perform_create(self, serializer):
         serializer.save()
