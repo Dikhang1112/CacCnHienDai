@@ -42,7 +42,7 @@ class User(AbstractUser):
 
 
 class Post_Tenant(BaseModel):
-    tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)  # lien ket voi user
+    tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE, null=True, blank=True)  # lien ket voi user
     title = models.CharField(max_length=255)
     content = models.TextField()
     price = models.FloatField(default=0.0)
