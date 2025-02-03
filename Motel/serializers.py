@@ -82,4 +82,4 @@ class ImageMotelSerializer(ModelSerializer):
 
     class Meta:
         model = ImageMotel
-        fields = ['id', 'landlord_id', 'url', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'post_landlord', 'url', 'created_at', 'updated_at', 'active']

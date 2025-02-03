@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from cloudinary.models import CloudinaryField
+from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 
@@ -42,7 +43,8 @@ class User(AbstractUser):
 
 
 class Post_Tenant(BaseModel):
-    tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE, null=True, blank=True)  # lien ket voi user
+    tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE, null=True,
+                               blank=True)  # lien ket voi user
     title = models.CharField(max_length=255)
     content = models.TextField()
     price = models.FloatField(default=0.0)
@@ -109,7 +111,7 @@ class Notification(BaseModel):
         db_table = 'notification'
 
 
-class ImageMotel(models.Model):
+class ImageMotel(BaseModel):
     id = models.AutoField(primary_key=True)
     post_landlord = models.ForeignKey(
         'Post_Landlord',
