@@ -1,42 +1,63 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions, parsers, generics, status
+from . import serializers
 from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, AdminManagement, \
     Notification, ImageMotel
 from .serializers import UserSerializer, PostTenantSerializer, CommentSerializer, \
     PostLandlordSerializer, FollowingsSerializer, AdminManagementSerializer, \
     NotificationSerializer, ImageMotelSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.parsers import MultiPartParser
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserStatsSerializer
-from django.db import IntegrityError
-from rest_framework.decorators import action
-from rest_framework import serializers
-
-
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.exceptions import ValidationError
 # class UserViewSet(viewsets.ModelViewSet):
 #     queryset = User.objects.filter(is_active=True).all()
 #     serializer_class = UserSerializer
 #     # permission_classes = [permissions.IsAuthenticated]
 #     parser_classes = [MultiPartParser, ]
+# //////
+# class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView):
+#     queryset = User.objects.filter(is_active=True).all()
+#     serializer_class = UserSerializer
+#     parser_classes = [parsers.MultiPartParser]
+#     permission_classes = [permissions.IsAuthenticated]
+
+    # def get_permissions(self):
+    #     if self.action == 'current-user':
+    #         return [permissions.IsAuthenticated()]
+    #
+    #     return [permissions.AllowAny()]
+    #
+    # def get_current_user(self, request):
+    #     if not request.user.is_authenticated:
+    #         return Response({"detail": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+    #
+    #     return Response(UserSerializer(request.user).data)
+
+
+# //////
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView):
     queryset = User.objects.filter(is_active=True).all()
     serializer_class = UserSerializer
     parser_classes = [parsers.MultiPartParser]
 
     def get_permissions(self):
-        if self.action == 'current-user':
+        if self.action.__eq__('current-user'):
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
 
     @action(methods=['get'], url_path='current-user', detail=False)
     def get_current_user(self, request):
-        return Response(UserSerializer(request.user).data)
+        if request.user.is_authenticated:
+            user_data = UserSerializer(request.user).data
+            return Response(user_data)
+        else:
+            return Response({"detail": "Authentication credentials were not provided."}, status=401)
 
 
 class PostTenantViewSet(viewsets.ModelViewSet):

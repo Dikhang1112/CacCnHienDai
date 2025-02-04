@@ -10,10 +10,15 @@ from django.contrib.auth import get_user_model
 
 
 class UserSerializer(ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ['id', 'user_type', 'phone', 'created_at', 'updated_at', 'active', 'avatar', 'first_name',
                   'last_name', 'email', 'username', 'password']
+
+    def get_avatar(self, obj):
+        return obj.avatar.url if obj.avatar else None #tránh lỗi khi avatar rỗng
 
 
 class PostTenantSerializer(ModelSerializer):
