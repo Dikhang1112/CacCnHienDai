@@ -49,7 +49,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             queryset = Comment.objects.none()
 
-        # Debug: Kiểm tra kết quả queryset
         print(queryset)
         return queryset
 
@@ -58,16 +57,16 @@ class PostLandlordViewSet(viewsets.ModelViewSet):
     queryset = Post_Landlord.objects.filter(active=True)
     serializer_class = PostLandlordSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    #permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Post_Landlord.objects.filter(active=True).select_related('user').prefetch_related('interactions')
+    parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
         user = self.request.user
         if not user:
             raise ValidationError("User is required.")
-        serializer.save(user=user)
+
+        post_landlord = serializer.save(user=user)
+
+        return post_landlord
 
 
 class FollowingsViewSet(viewsets.ModelViewSet):

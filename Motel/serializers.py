@@ -5,6 +5,8 @@ from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, Admin
     Notification, ImageMotel
 from rest_framework.fields import CharField, IntegerField
 from rest_framework import serializers
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -28,18 +30,34 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'user', 'post_tenant','post_landlord', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'content', 'user', 'post_tenant', 'post_landlord', 'created_at', 'updated_at', 'active']
 
 
-class PostLandlordSerializer(ModelSerializer):
-    user = StringRelatedField()  # Hiển thị tên User thay vì ID
-    image = serializers.SerializerMethodField()
+class PostLandlordSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    # thu cong tung truong anh rieng biet
+    image_1 = serializers.ImageField(write_only=True, required=True)
+    image_2 = serializers.ImageField(write_only=True, required=True)
+    image_3 = serializers.ImageField(write_only=True, required=True)
 
     class Meta:
         model = Post_Landlord
         fields = ['id', 'user', 'title', 'address', 'description', 'price', 'capacity', 'status', 'location',
-                  'interaction_type',  'image',
-                  'created_at', 'updated_at', 'active']
+                  'interaction_type', 'image_1', 'image_2', 'image_3', 'created_at', 'updated_at', 'active']
+
+    def create(self, validated_data):
+        image_1 = validated_data.pop('image_1')
+        image_2 = validated_data.pop('image_2')
+        image_3 = validated_data.pop('image_3')
+
+        post_landlord = Post_Landlord.objects.create(**validated_data)
+
+        # Lưu ảnh vào ImageMotel
+        ImageMotel.objects.create(post_landlord=post_landlord, image=image_1)
+        ImageMotel.objects.create(post_landlord=post_landlord, image=image_2)
+        ImageMotel.objects.create(post_landlord=post_landlord, image=image_3)
+
+        return post_landlord
 
 
 class FollowingsSerializer(ModelSerializer):

@@ -39,7 +39,7 @@ class User(AbstractUser):
         try:
             return f"{self.username} - {self.get_usertype_display()}"
         except AttributeError:
-            return f"{self.username} - Unknown"
+            return f"{self.username} -"
 
 
 class Post_Tenant(BaseModel):
@@ -121,7 +121,6 @@ class Post_Landlord(BaseModel):
     capacity = models.IntegerField()
     status = models.BooleanField(default=True)  # trang thai xem bai dang con hieu luc k?
     location = models.CharField(max_length=255, null=True, blank=True)
-    image = CloudinaryField('image', null=True, blank=True)
     INTERACTION_CHOICES = [
         ('like', 'Like'),
         # ('dislike', 'Dislike'),
