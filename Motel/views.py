@@ -35,15 +35,23 @@ class PostTenantViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.filter(active=True)
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        # Lọc bình luận chỉ cho bài viết với ID cụ thể
-        post_id = self.request.query_params.get('post', None)
-        if post_id is not None:
-            return Comment.objects.filter(post_id=post_id)
-        return Comment.objects.all()  # Hoặc trả về một danh sách rỗng nếu không có post_id
+        # Lọc bình luận dựa trên post_landlord hoặc post_tenant
+        post_landlord = self.request.query_params.get('post_landlord', None)
+        post_tenant = self.request.query_params.get('post_tenant', None)
+
+        if post_landlord:
+            queryset = Comment.objects.filter(post_landlord=post_landlord)
+        elif post_tenant:
+            queryset = Comment.objects.filter(post_tenant=post_tenant)
+        else:
+            queryset = Comment.objects.none()
+
+        # Debug: Kiểm tra kết quả queryset
+        print(queryset)
+        return queryset
 
 
 class PostLandlordViewSet(viewsets.ModelViewSet):

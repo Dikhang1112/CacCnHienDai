@@ -19,26 +19,26 @@ class PostTenantSerializer(ModelSerializer):
 
     class Meta:
         model = Post_Tenant
-        fields = ['id', 'tenant', 'comment', 'title', 'content', 'price', 'interaction_type',
+        fields = ['id', 'tenant', 'comment', 'title', 'content', 'price', 'location', 'interaction_type',
                   'created_at', 'updated_at', 'active']
 
 
 class CommentSerializer(ModelSerializer):
     user = StringRelatedField()
-    post = StringRelatedField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'user', 'post', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'content', 'user', 'post_tenant','post_landlord', 'created_at', 'updated_at', 'active']
 
 
 class PostLandlordSerializer(ModelSerializer):
     user = StringRelatedField()  # Hiển thị tên User thay vì ID
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Post_Landlord
         fields = ['id', 'user', 'title', 'address', 'description', 'price', 'capacity', 'status', 'location',
-                  'interaction_type',  # Thêm interaction_type vào đây
+                  'interaction_type',  'image',
                   'created_at', 'updated_at', 'active']
 
 
