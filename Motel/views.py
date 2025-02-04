@@ -14,13 +14,29 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserStatsSerializer
 from django.db import IntegrityError
+from rest_framework.decorators import action
+from rest_framework import serializers
 
 
-class UserViewSet(viewsets.ModelViewSet):
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.filter(is_active=True).all()
+#     serializer_class = UserSerializer
+#     # permission_classes = [permissions.IsAuthenticated]
+#     parser_classes = [MultiPartParser, ]
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView,generics.RetrieveAPIView, generics.ListAPIView):
     queryset = User.objects.filter(is_active=True).all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, ]
+    parser_classes = [parsers.MultiPartParser]
+
+    def get_permissions(self):
+        if self.action.__eq__('current-user'):
+            return [permissions.IsAuthenticated()]
+
+        return [permissions.AllowAny()]
+
+    @action(methods=['get'], url_path='current-user', detail=False)
+    def get_current_user(self, request):
+        return Response(serializers.UserSerializer(request.user).data)
 
 
 class PostTenantViewSet(viewsets.ModelViewSet):

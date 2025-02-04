@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 from cloudinary.models import CloudinaryField
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -39,12 +40,11 @@ class User(AbstractUser):
         try:
             return f"{self.username} - {self.get_usertype_display()}"
         except AttributeError:
-            return f"{self.username} -"
+            return f"{self.username} - {self.user_type if self.user_type else 'Unknown'}"
 
 
 class Post_Tenant(BaseModel):
-    tenant = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE, null=True,
-                               blank=True)  # lien ket voi user
+    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts', on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)
     content = models.TextField()
     price = models.FloatField(default=0.0)
