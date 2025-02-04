@@ -23,20 +23,20 @@ from rest_framework import serializers
 #     serializer_class = UserSerializer
 #     # permission_classes = [permissions.IsAuthenticated]
 #     parser_classes = [MultiPartParser, ]
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView,generics.RetrieveAPIView, generics.ListAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveAPIView, generics.ListAPIView):
     queryset = User.objects.filter(is_active=True).all()
     serializer_class = UserSerializer
     parser_classes = [parsers.MultiPartParser]
 
     def get_permissions(self):
-        if self.action.__eq__('current-user'):
+        if self.action == 'current-user':
             return [permissions.IsAuthenticated()]
 
         return [permissions.AllowAny()]
 
     @action(methods=['get'], url_path='current-user', detail=False)
     def get_current_user(self, request):
-        return Response(serializers.UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user).data)
 
 
 class PostTenantViewSet(viewsets.ModelViewSet):
@@ -55,9 +55,8 @@ class PostTenantViewSet(viewsets.ModelViewSet):
             # Gán tenant vào bài đăng
             serializer.save(tenant=tenant)
         else:
-            # Nếu không tìm thấy tenant, có thể trả về lỗi
+            # Nếu không tìm thấy tenant, trả về lỗi
             raise serializers.ValidationError("Tenant not found.")
-
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -75,7 +74,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             queryset = Comment.objects.none()
 
-        print(queryset)
         return queryset
 
 
@@ -91,7 +89,6 @@ class PostLandlordViewSet(viewsets.ModelViewSet):
             raise ValidationError("User is required.")
 
         post_landlord = serializer.save(user=user)
-
         return post_landlord
 
 
@@ -122,7 +119,7 @@ def index(request):
 
 class UserStatsView(APIView):
     def get(self, request):
-        # loc user theo type hoac theo thang
+        # Lọc user theo type hoặc theo tháng
         user_type = request.query_params.get('user_type')
         month = request.query_params.get('month')
 
@@ -131,10 +128,10 @@ class UserStatsView(APIView):
 
         users = User.objects.filter(user_type=user_type, created_at__month=month)
 
-        # dem sl nguoi dung
+        # Đếm số lượng người dùng
         count = users.count()
 
-        # tao du lieu
+        # Tạo dữ liệu
         stats = {
             "user_type": user_type,
             "month": int(month),
@@ -142,5 +139,4 @@ class UserStatsView(APIView):
         }
 
         serializer = UserStatsSerializer(stats)
-
         return Response(serializer.data)

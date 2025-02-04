@@ -6,6 +6,7 @@ from .models import User, Post_Tenant, Comment, Post_Landlord, Followings, Admin
 from rest_framework.fields import CharField, IntegerField
 from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth import get_user_model
 
 
 class UserSerializer(ModelSerializer):
