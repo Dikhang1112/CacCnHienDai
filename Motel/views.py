@@ -47,7 +47,17 @@ class PostTenantViewSet(viewsets.ModelViewSet):
         return Post_Tenant.objects.filter(active=True).select_related('tenant')
 
     def perform_create(self, serializer):
-        serializer.save()
+        tenant_username = self.request.data.get('tenant')  # Lấy tên người dùng từ request
+
+        # Kiểm tra xem username có tồn tại trong hệ thống không
+        tenant = User.objects.filter(username=tenant_username).first()
+        if tenant:
+            # Gán tenant vào bài đăng
+            serializer.save(tenant=tenant)
+        else:
+            # Nếu không tìm thấy tenant, có thể trả về lỗi
+            raise serializers.ValidationError("Tenant not found.")
+
 
 
 class CommentViewSet(viewsets.ModelViewSet):
