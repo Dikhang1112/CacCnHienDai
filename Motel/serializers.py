@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 
 class UserSerializer(ModelSerializer):
-    avatar = serializers.SerializerMethodField()
+    avatar = serializers.ImageField(required=False)
 
     class Meta:
         model = User

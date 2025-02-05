@@ -16,7 +16,7 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser):
-    avatar = CloudinaryField('avatar')
+    avatar = CloudinaryField('avatar', null=True)
     TENANT = 'tenant'
     LANDLORD = 'landlord'
     USERTYPE_CHOICES = [
