@@ -1,7 +1,7 @@
 from django.urls import path, include
-from . import views
 from rest_framework.routers import DefaultRouter
-from .views import UserStatsView
+from . import views
+from .views import UserStatsView, render_user_stats
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -14,6 +14,7 @@ router.register(r'notifications', views.NotificationViewSet)
 router.register(r'image-motels', views.ImageMotelViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('user-stats/', UserStatsView.as_view(), name='user-stats'),
+    path('', include(router.urls)),  # Đường dẫn API của router
+    path('api/user-stats/', UserStatsView.as_view(), name='user-stats-api'),  # API cho dữ liệu Chart.js
+    path('user-stats/', render_user_stats, name='user-stats'),  # Hiển thị trang biểu đồ
 ]

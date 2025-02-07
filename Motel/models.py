@@ -50,14 +50,10 @@ class Post_Tenant(BaseModel):
     price = models.FloatField(default=0.0)
     location = models.TextField(blank=True, null=True)
     LIKE = 'like'
-    # DISLIKE = 'dislike'
-    # REPORT = 'report'
     VIEW = 'view'
 
     INTERACTION_CHOICES = [
         (LIKE, 'Like'),
-        # (DISLIKE, 'Dislike'),
-        # (REPORT, 'Report'),
         (VIEW, 'View'),
     ]
 
@@ -123,8 +119,6 @@ class Post_Landlord(BaseModel):
     location = models.CharField(max_length=255, null=True, blank=True)
     INTERACTION_CHOICES = [
         ('like', 'Like'),
-        # ('dislike', 'Dislike'),
-        # ('report', 'Report'),
         ('view', 'View'),
     ]
 
